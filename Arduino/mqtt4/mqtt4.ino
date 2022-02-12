@@ -262,10 +262,6 @@ void setup() {
 
 
 
-
-  //read configuration from FS json
-  Serial.println("mounting FS...");
-
   if (SPIFFS.begin()) {
     Serial.println("mounted file system");
     if (SPIFFS.exists("/config.json")) {
@@ -279,25 +275,33 @@ void setup() {
         std::unique_ptr<char[]> buf(new char[size]);
 
         configFile.readBytes(buf.get(), size);
+
+#ifdef ARDUINOJSON_VERSION_MAJOR >= 6
+        DynamicJsonDocument json(1024);
+        auto deserializeError = deserializeJson(json, buf.get());
+        serializeJson(json, Serial);
+        if ( ! deserializeError ) {
+#else
         DynamicJsonBuffer jsonBuffer;
         JsonObject& json = jsonBuffer.parseObject(buf.get());
         json.printTo(Serial);
         if (json.success()) {
+#endif
           Serial.println("\nparsed json");
-
           strcpy(mqtt_broker, json["mqtt_broker"]);
           strcpy(mqtt_port, json["mqtt_port"]);
-      //    strcpy(blynk_token, json["blynk_token"]);
-
+         // strcpy(api_token, json["api_token"]);
         } else {
           Serial.println("failed to load json config");
         }
+        configFile.close();
       }
     }
   } else {
     Serial.println("failed to mount FS");
   }
   //end read
+
 
 
 
@@ -388,22 +392,31 @@ wifiManager.setSaveConfigCallback(saveConfigCallback);
  // strcpy(blynk_token, custom_blynk_token.getValue());
 
 
-   //save the custom parameters to FS
+ //save the custom parameters to FS
   if (shouldSaveConfig) {
     Serial.println("saving config");
+#ifdef ARDUINOJSON_VERSION_MAJOR >= 6
+    DynamicJsonDocument json(1024);
+#else
     DynamicJsonBuffer jsonBuffer;
     JsonObject& json = jsonBuffer.createObject();
+#endif
     json["mqtt_broker"] = mqtt_broker;
     json["mqtt_port"] = mqtt_port;
- //   json["blynk_token"] = blynk_token;
+   // json["api_token"] = api_token;
 
     File configFile = SPIFFS.open("/config.json", "w");
     if (!configFile) {
       Serial.println("failed to open config file for writing");
     }
 
+#ifdef ARDUINOJSON_VERSION_MAJOR >= 6
+    serializeJson(json, Serial);
+    serializeJson(json, configFile);
+#else
     json.printTo(Serial);
     json.printTo(configFile);
+#endif
     configFile.close();
     //end save
   }
@@ -423,7 +436,6 @@ wifiManager.setSaveConfigCallback(saveConfigCallback);
 
 
 /*
-
   
   // connecting to a WiFi network
   WiFi.begin(ssid, password);
@@ -596,13 +608,10 @@ if (length > 0) {
         Serial.println();
         Serial.println("New MQTT Broker Address:");
         Serial.println(mqtt_broker);
-
         if (client.connected()) {
-
           Serial.println("Esp Client starts to disconnect from mqtt broker");
         //  client.unsubscribe(topic);
          client.disconnect();
-
           while (client.connected()) {
             Serial.println("Waiting for client to disconnect from mqtt broker");
             delay(2000);
@@ -627,10 +636,6 @@ if (length > 0) {
           client.publish(topic, "hello emqx");
           client.subscribe(topic);
         }
-
-
-
-
         
       
        // Serial.print(val[1]);
