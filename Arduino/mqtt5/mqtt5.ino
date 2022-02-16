@@ -100,6 +100,9 @@ const char *mqtt_password = "mqttpassword";
 char mqtt_broker[40] = "192.168.178.20";
 char mqtt_port[6] = "1883";
 
+char wifi_name[40] = "";
+char wifi_password[40] = "";
+
 //char mqtt_broker[40] = "";
 //char mqtt_port[6] = "";
 //char blynk_token[34] = "YOUR_BLYNK_TOKEN";
@@ -300,6 +303,8 @@ void setup() {
           Serial.println("\nparsed json");
           strcpy(mqtt_broker, json["mqtt_broker"]);
           strcpy(mqtt_port, json["mqtt_port"]);
+          strcpy(wifi_name, json["wifi_name"]);
+          strcpy(wifi_password, json["wifi_password"]);
          // strcpy(api_token, json["api_token"]);
         } else {
           Serial.println("failed to load json config");
@@ -332,6 +337,8 @@ void setup() {
   // id/name placeholder/prompt default length
   WiFiManagerParameter custom_mqtt_broker("broker", "Here a server IP", mqtt_broker, 40);
   WiFiManagerParameter custom_mqtt_port("port", "Here a broker port", mqtt_port, 6);
+    WiFiManagerParameter custom_wifi_name("broker", "Here a server IP", mqtt_broker, 40);
+  WiFiManagerParameter custom_wifi_password("port", "Here a broker port", mqtt_port, 6);
  // WiFiManagerParameter custom_blynk_token("blynk", "Here a blynk token", blynk_token, 32);
 
 
@@ -345,7 +352,8 @@ void setup() {
   //reset settings - for testing
   //wifiManager.resetSettings();
 
- 
+// wifiManager.setClass("invert"); // dark theme
+
   //set callback that gets called when connecting to previous WiFi fails, and enters Access Point mode
   wifiManager.setAPCallback(configModeCallback);
 
@@ -353,19 +361,26 @@ wifiManager.setSaveConfigCallback(saveConfigCallback);
 
 
 
-
+//  WiFi.printDiag(Serial);
+ // Serial.println("SAVED: " + (String)wifiManager.getWiFiIsSaved() ? "YES" : "NO");
+  Serial.println("SSID: " + (String)wifiManager.getSSID());
+  Serial.println("PASS: " + (String)wifiManager.getPassword());
 
 
  //add all your parameters here
   wifiManager.addParameter(&custom_mqtt_broker);
   wifiManager.addParameter(&custom_mqtt_port);
+    wifiManager.addParameter(&custom_wifi_name);
+  wifiManager.addParameter(&custom_wifi_password);
  // wifiManager.addParameter(&custom_blynk_token);
 
   
 //  wifiManager.resetSettings();
 
+//wifiManager.setAPStaticIPConfig(IPAddress(10,0,1,1), IPAddress(10,0,1,1), IPAddress(255,255,255,0));
+
   if (resetEsp) {
-      if(!wifiManager.startConfigPortal("esp8266 mischiantis test")) {
+      if(!wifiManager.startConfigPortal("esp8266 mischiantis test", "password")) {
       Serial.println("failed to connect and hit timeout");
     //reset and try again, or maybe put it to deep sleep
     ESP.reset();
@@ -373,18 +388,21 @@ wifiManager.setSaveConfigCallback(saveConfigCallback);
       }
             resetEsp = false;
 
-      }
- 
+      } 
+      //else {
+     //wifiManager.startConfigPortal("esp8266 mischiantis test");
+
   //fetches ssid and pass and tries to connect
   //if it does not connect it starts an access point with the specified name
   //here  "AutoConnectAP"
   //and goes into a blocking loop awaiting configuration
-//  if(!wifiManager.autoConnect("esp8266 mischiantis test")) {
-//    Serial.println("failed to connect and hit timeout");
+ // if(!wifiManager.autoConnect("esp8266 mischiantis test")) {
+ //  Serial.println("failed to connect and hit timeout");
     //reset and try again, or maybe put it to deep sleep
-//    ESP.reset();
- //   delay(1000);
+ //   ESP.reset();
+  //  delay(1000);
 //  } 
+ //     }
  
   //if you get here you have connected to the WiFi
   Serial.println(F("WIFIManager connected!"));
@@ -407,6 +425,11 @@ wifiManager.setSaveConfigCallback(saveConfigCallback);
 
 
 //read updated parameters
+
+ // strcpy(wifi_password, wifiManager.getPassword().c_str());
+ // strcpy(wifi_name, wifiManager.getSSID().c_str());
+   strcpy(wifi_password, custom_wifi_password.getValue());
+  strcpy(wifi_name, custom_wifi_name.getValue());
   strcpy(mqtt_broker, custom_mqtt_broker.getValue());
   strcpy(mqtt_port, custom_mqtt_port.getValue());
  // strcpy(blynk_token, custom_blynk_token.getValue());
@@ -421,6 +444,8 @@ wifiManager.setSaveConfigCallback(saveConfigCallback);
     DynamicJsonBuffer jsonBuffer;
     JsonObject& json = jsonBuffer.createObject();
 #endif
+    json["wifi_password"] = wifi_password;
+    json["wifi_name"] = wifi_name;
     json["mqtt_broker"] = mqtt_broker;
     json["mqtt_port"] = mqtt_port;
    // json["api_token"] = api_token;
@@ -443,7 +468,11 @@ wifiManager.setSaveConfigCallback(saveConfigCallback);
 
   Serial.println("local ip");
   Serial.println(WiFi.localIP());
- 
+
+ Serial.print(F("wifiname --> "));
+  Serial.println(wifi_name);
+  Serial.print(F("wifipassword --> "));
+  Serial.println(wifi_password);
   Serial.print(F("broker --> "));
   Serial.println(mqtt_broker);
   Serial.print(F("port --> "));
@@ -502,7 +531,10 @@ bool debug = false;
 
 void loop() {
 
-  
+  /*if (!resetEsp) {
+
+    resetEsp = true;
+  }*/
   client.loop();
   
 
