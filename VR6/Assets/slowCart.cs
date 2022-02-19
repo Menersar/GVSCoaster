@@ -17,7 +17,8 @@ namespace Dreamteck.Splines.Examples
                 // Debug.Log("hoooi");
              //   rc.RemoveBrake();
              //   rc.AddForce(10f);
-                   rc.AddBrake(rc.speed);
+                   rc.AddBrake(rc.speed*0.2f);
+               // rc.RemoveBrake();
             }
 
         }

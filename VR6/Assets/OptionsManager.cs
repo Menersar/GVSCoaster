@@ -36,22 +36,34 @@ public class OptionsManager : MonoBehaviour
     public TMP_Text buttonShadowsText;
     public TMP_Text buttonViewingDistanceText;
     public TMP_Text buttonEnvironmentText;
-    public TMP_Text buttonOpaqueTexturesText;
+    
+    public TMP_Text buttonMuteText;
+    public TMP_Text buttonCurrentVolumeText;
+  //  public TMP_Text buttonOpaqueTexturesText;
+ //   public TMP_Text buttonShadowDistanceText;
 
     private void OnEnable()
     {
-        UpdateList(buttonPPText, GameState.Instance.GetGraphics());
+        UpdateListBool(buttonPPText, GameState.Instance.GetGraphics());
 
-       // Debug.Log(GameState.Instance.GetGraphics() + "_________");
-        UpdateList2(buttonAAText, GameState.Instance.GetQuality());
+        // Debug.Log(GameState.Instance.GetGraphics() + "_________");
+        UpdateList3Int(buttonAAText, GameState.Instance.GetQuality());
         // UpdateList(shake, GameState.Instance.shake);
 
+        UpdateListBool(buttonShadowsText, GameState.Instance.GetShadowsOn());
 
 
+        UpdateList3Int(buttonViewingDistanceText, GameState.Instance.GetViewingDistance());
 
+        UpdateListBool(buttonEnvironmentText, GameState.Instance.GetEnvironmentOn());
+        
+        UpdateListBool(buttonMuteText, !GameState.Instance.GetMuted());
 
+        //UpdateListBool(buttonMuteText, !GameState.Instance.GetMuted());
 
-
+        float _num = GameState.Instance.GetVolume();
+        buttonCurrentVolumeText.text = $"{_num:F2}";
+        UpdateVolume();
 
         // volumeS.value = GameState.Instance.GetVolume();
         //  musicS.value = GameState.Instance.GetMusic();
@@ -67,16 +79,17 @@ public class OptionsManager : MonoBehaviour
     {
         bool _graphics = !GameState.Instance.GetGraphics();
         GameState.Instance.SetGraphics(_graphics);
-        if (_graphics)
-        {
-            buttonPPText.text = "Post Processing:\nON";
-        }
-        else
-        {
-            buttonPPText.text = "Post Processing:\nOFF";
-        }
-        // UpdateList(graphics, b);
+
+        UpdateListBool(buttonPPText, _graphics);
     }
+
+    public void ToggleShadows()
+    {
+        bool _shadows = !GameState.Instance.GetShadowsOn();
+        GameState.Instance.SetShadowsOn(_shadows);
+        UpdateListBool(buttonShadowsText, _shadows);
+    }
+
 
 
 
@@ -89,26 +102,45 @@ public class OptionsManager : MonoBehaviour
             _quality = 0;
         }
         GameState.Instance.SetQuality(_quality);
-        if (_quality == 0)
+
+        UpdateList3Int(buttonAAText, _quality);
+    }
+
+    public void ChangeViewingDistance()
+    {
+        int _viewingDistance = GameState.Instance.GetViewingDistance();
+        _viewingDistance++;
+        if (_viewingDistance > 2)
         {
-            buttonAAText.text = "Quality:\nLOW";
+            _viewingDistance = 0;
         }
-        else if (_quality == 1)
-        {
-            buttonAAText.text = "Quality:\nMEDIUM";
-        }
-        else if (_quality == 2)
-        {
-            buttonAAText.text = "Quality:\nHIGH";
-        }
+        GameState.Instance.SetViewingDistance(_viewingDistance);
+
+          UpdateList3Int(buttonViewingDistanceText, _viewingDistance);
+
+
     }
 
 
+    public void ToggleEnvironment()
+    {
+        bool _environment = !GameState.Instance.GetEnvironmentOn();
+        GameState.Instance.SetEnvironmentOn(_environment);
+        UpdateListBool(buttonEnvironmentText, _environment);
 
+    }
 
+    public void ToggleMute()
+    {
+        bool _muted = !GameState.Instance.GetMuted();
+        GameState.Instance.SetMuted(_muted);
+        UpdateListBool(buttonMuteText, !_muted);
 
-
-
+        if (!_muted)
+        {
+            UpdateVolume();
+        }
+    }
 
     /*
     public void ChangeShake(bool b)
@@ -120,55 +152,80 @@ public class OptionsManager : MonoBehaviour
 
     */
 
-    /*
+    
     public void UpdateVolume()
     {
-        float num = AudioListener.volume = volumeS.value;
+        //float num = AudioListener.volume = GameState.Instance.GetVolume();
+        //  GameState.Instance.SetVolume(num);
+        // buttonCurrentVolumeText.text = $"{num:F2}";
+
+        //float num = AudioListener.volume = volumeS.value;
+        //float num = AudioListener.volume = GameState.Instance.GetVolume();
+        float num = GameState.Instance.GetVolume();
         GameState.Instance.SetVolume(num);
-        volume.text = $"{num:F2}";
+        //volume.text = $"{num:F2}";
+        buttonCurrentVolumeText.text = $"{num:F2}";
     }
 
-    */
+    public void reduceVolume()
+    {
+        if (GameState.Instance.GetVolume() >= 0.1f) {
+            float num = GameState.Instance.GetVolume() ;
+            GameState.Instance.SetVolume(num - .1f);
+            buttonCurrentVolumeText.text = $"{GameState.Instance.GetVolume():F2}";
+        }
+    }
+
+    public void increaseVolume()
+    {
+       // if (GameState.Instance.GetVolume() <= .9f)
+       // {
+            float num = GameState.Instance.GetVolume() ;
+            GameState.Instance.SetVolume(num + .1f);
+            buttonCurrentVolumeText.text = $"{GameState.Instance.GetVolume():F2}";
+       // }
+    }
 
 
-    private void UpdateList(TMP_Text text, bool b)
+    private void UpdateListBool(TMP_Text text, bool b)
     {
 
         if (b)
         {
-            buttonPPText.text = "Post Processing:\nON";
+            text.text = "ON";
         }
         else
         {
-            buttonPPText.text = "Post Processing:\nOFF";
+            text.text = "OFF";
         }
     }
 
 
-    private void UpdateList2(TMP_Text text, int b)
+    private void UpdateList3Int(TMP_Text text, int b)
     {
         if (b == 0)
         {
-            buttonAAText.text = "Quality:\nLOW";
+            text.text = "LOW";
         }
         else if (b == 1)
         {
-            buttonAAText.text = "Quality:\nMEDIUM";
+            text.text = "MEDIUM";
         }
         else if (b == 2)
         {
-            buttonAAText.text = "Quality:\nHIGH";
+            text.text = "HIGH";
         }
     }
 
 
+   
 
 
 
-
-
+/*
     private void UpdateList3(TMP_Dropdown dropD, int resindex)
     {
 
     }
+*/
 }

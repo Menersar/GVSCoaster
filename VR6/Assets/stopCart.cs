@@ -10,7 +10,7 @@ namespace Dreamteck.Splines.Examples
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.tag == "Cart" && rc.brakeRemoved)
+            if (other.tag == "Cart")// && rc.brakeRemoved)
             {
                 if (!firstRound)
                 {
@@ -18,11 +18,13 @@ namespace Dreamteck.Splines.Examples
                 }
                 else
                 {
+                    rc.stop = true;
                     // Debug.Log("hoooi");
                     //   rc.RemoveBrake();
                     //   rc.AddForce(10f);
                     rc.speed = 0;
                     rc.minSpeed = 0;
+                    rc.stop = true;
                 }
             }
 

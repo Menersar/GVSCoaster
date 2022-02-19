@@ -15,6 +15,7 @@ public class PhysicsButton : MonoBehaviour
     public UnityEvent onPressed, onReleased;
 
     public bool restrictButton = true;
+    public bool playerTouchesButton = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -46,15 +47,19 @@ public class PhysicsButton : MonoBehaviour
     private void Pressed()
     {
         _isPressed = true;
+        if (playerTouchesButton)
         onPressed.Invoke();
         Debug.Log("Pressed");
     }
 
     private void Released()
     {
+
         _isPressed = false;
+        if(playerTouchesButton)
         onReleased.Invoke();
         Debug.Log("Released");
+        playerTouchesButton = false;
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -62,6 +67,7 @@ public class PhysicsButton : MonoBehaviour
         if (collision.gameObject.tag == "Player" && restrictButton)
         {
             this.GetComponent<ConfigurableJoint>().yMotion = ConfigurableJointMotion.Limited;
+            playerTouchesButton = true;
         }
     }
 
@@ -70,6 +76,7 @@ public class PhysicsButton : MonoBehaviour
         if (collision.gameObject.tag == "Player" && restrictButton)
         {
             this.GetComponent<ConfigurableJoint>().yMotion = ConfigurableJointMotion.Locked;
+            playerTouchesButton = false;
         }
     }
 }

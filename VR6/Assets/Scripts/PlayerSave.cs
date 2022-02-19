@@ -38,13 +38,29 @@ public class PlayerSave
         set;
     } = true;
 
+    public bool shadowsOn
+    {
+        get;
+        set;
+    } = true;
+
+    public bool environmentOn
+    {
+        get;
+        set;
+    } = true;
+
     public int quality
     {
         get;
         set;
     } = 2;
 
-
+    public int viewingDistance
+    {
+        get;
+        set;
+    } = 2;   
 
     public int resolution
     {
@@ -83,7 +99,7 @@ public class PlayerSave
     {
         get;
         set;
-    } = 0.75f;
+    } = 0.0f;
 
 
     public float music

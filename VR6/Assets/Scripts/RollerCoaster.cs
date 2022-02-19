@@ -47,6 +47,7 @@ namespace Dreamteck.Splines.Examples
         //  public bool gvsCartOn = true;
         // public bool playerOnCart = false;
         public bool brakeRemoved = false;
+        public bool stop = false;
 
 
 
@@ -121,6 +122,10 @@ namespace Dreamteck.Splines.Examples
             float dot = Vector3.Dot(this.transform.forward, Vector3.down);
             float dotPercent = Mathf.Lerp(-slopeRange / 90f, slopeRange / 90f, (dot + 1f) / 2f);
             speed -= Time.deltaTime * frictionForce * (1f - brakeForce);
+            if (stop)
+            {
+                speed = 0;
+            }
             float speedAdd = 0f;
             float speedPercent = Mathf.InverseLerp(minSpeed, maxSpeed, speed);
             if (dotPercent > 0f)
@@ -133,11 +138,19 @@ namespace Dreamteck.Splines.Examples
             }
             speed += speedAdd * (1f-brakeForce);
             speed = Mathf.Clamp(speed, minSpeed, maxSpeed);
+            if (stop)
+            {
+                speed = 0;
+            }
             if (addForce > 0f) {
                 float lastAdd = addForce;
                 addForce = Mathf.MoveTowards(addForce, 0f, Time.deltaTime * 30f);
                 speed += lastAdd - addForce;
-             }
+                if (stop)
+                {
+                    speed = 0;
+                }
+            }
             follower.followSpeed = speed;
             follower.followSpeed *= (1f - brakeForce);
             if (brakeTime > Time.time) brakeForce = Mathf.MoveTowards(brakeForce, 1f, Time.deltaTime * brakeSpeed);
@@ -163,6 +176,7 @@ namespace Dreamteck.Splines.Examples
 
         public void AddBrake(float time)
         {
+           // minSpeed = 0;
             brakeTime = Time.time + time;
             brakeSound.Stop();
             brakeSound.Play();
@@ -171,6 +185,9 @@ namespace Dreamteck.Splines.Examples
 
         public void RemoveBrake()
         {
+            //minSpeed = 5;
+            stop = false;
+
             brakeTime = 0f;
             brakeRemoved = true;
         }

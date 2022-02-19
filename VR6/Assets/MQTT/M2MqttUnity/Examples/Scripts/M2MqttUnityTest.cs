@@ -87,8 +87,11 @@ public class M2MqttUnityTest : M2MqttUnityClient
     //public GameObject statusIndicator;
     public GameObject statusIndicator2;
 
-    public TMP_Text brokerAdressText;
-    public TMP_Text brokerPortText;
+   // public TMP_Text brokerAdressText;
+  //  public TMP_Text brokerPortText;
+
+    public TMP_InputField brokerAdressInputField;
+    public TMP_InputField brokerPortInputField;
 
     public GameObject manualConnect;
     public GameObject manualDisconnect;
@@ -174,8 +177,8 @@ public class M2MqttUnityTest : M2MqttUnityClient
 
         if (!connectionEstablished)
         {
-            this.brokerAddress = brokerAdressText.text;
-            int.TryParse(brokerPortText.text, out this.brokerPort);
+            this.brokerAddress = brokerAdressInputField.text;
+            int.TryParse(brokerPortInputField.text, out this.brokerPort);
             base.Connect();
           //  sendString("A" + this.brokerAddress + ":" + "P" + this.brokerPort);
         }
@@ -322,9 +325,9 @@ public class M2MqttUnityTest : M2MqttUnityClient
 
         protected override void Start()
         {
-            this.brokerAddress = brokerAdressText.text;
+            this.brokerAddress = brokerAdressInputField.text;
            // this.brokerPort = int.Parse(brokerPortInputField.text);
-            int.TryParse(brokerPortText.text, out this.brokerPort);
+            int.TryParse(brokerPortInputField.text, out this.brokerPort);
 
             SetUiMessage("Ready.");
             updateUI = true;

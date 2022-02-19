@@ -25,12 +25,12 @@ public class EnterCart : MonoBehaviour
         {
             // cart.GetComponent<RollerCoaster>()
             conMan.setPlayerOnCart(true);
-            Debug.Log("Player on the Cart!");
-
-           // other.transform.SetParent(cart.transform);
-            other.transform.position = cart.transform.position;
-            other.transform.rotation = cart.transform.rotation;
-            otheroni = other.gameObject;
+            //Debug.Log("Player on the Cart!");
+           // otheroni = other.gameObject;
+            // other.transform.SetParent(cart.transform);
+            otheroni.transform.position = cart.transform.position;
+            otheroni.transform.rotation = cart.transform.rotation;
+            
 
           //  other.GetComponent<XR>
         }
