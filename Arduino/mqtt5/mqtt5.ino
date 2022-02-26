@@ -88,8 +88,8 @@ bool firing = false;
 //const char *mqtt_broker = "192.168.1.10";
 //IPAddress serveroni(192, 168, 178, 20);
 
-const char *topic = "M2MQTT_Unity/test/ESPXY";
-const char *outTopic = "M2MQTT_Unity/test/ESPXY/outTopic";
+const char *topic = "MQTTUnityEsp/GVSCoaster/inTopic";
+const char *outTopic = "MQTTUnityEsp/GVSCoaster/outTopic";
 const char *mqtt_username = "mqttuser";
 const char *mqtt_password = "mqttpassword";
 //const int mqtt_port = 1883;
