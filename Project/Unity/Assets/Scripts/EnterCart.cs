@@ -28,8 +28,8 @@ public class EnterCart : MonoBehaviour
             otheroni.transform.position = cart.transform.position;
             otheroni.transform.rotation = cart.transform.rotation;
 
-            Camera.main.transform.localPosition = new Vector3(0, 0, 0);
-            Camera.main.transform.localRotation = new Quaternion(0, 0, 0, 1);
+            //Camera.main.transform.localPosition = new Vector3(0, 0, 0);
+            //Camera.main.transform.localRotation = new Quaternion(0, 0, 0, 1);
 
             if (!GameState.Instance.GetMovable())
             {

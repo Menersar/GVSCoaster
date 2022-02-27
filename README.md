@@ -20,10 +20,13 @@ Arduino (ESP) files:
 
 Libraries used in the Arduino (ESP) project:
 - Found under \Project\Arduino\libraries.
-- To use them, copy these into folder C:\Users\USERNAME\Documents\Arduino\libraries
+- To use them, copy these into folder C:\Users\USERNAME\Documents\Arduino\libraries.
 
 Build (Android APK):
 - Found under \Project\Build.
 
 Documentation and Video:
-- Found under \Documentation
+- Found under \Documentation.
+
+Eagle Schematic and Board:
+- Found under \Project\Eagle.

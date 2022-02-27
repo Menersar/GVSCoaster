@@ -31,7 +31,7 @@ public class PlayerSave
     {
         get;
         set;
-    } = false;
+    } = true;
 
     public int environmentLevel
     {
@@ -61,7 +61,7 @@ public class PlayerSave
     {
         get;
         set;
-    } = 0.0f;
+    } = 0.5f;
 
     public int powerLevel
     {

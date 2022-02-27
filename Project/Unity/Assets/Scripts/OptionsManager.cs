@@ -165,16 +165,24 @@ public class OptionsManager : MonoBehaviour
     {
         float num = GameState.Instance.GetVolume();
         GameState.Instance.SetVolume(num);
-        buttonCurrentVolumeText.text = $"{num:F2}";
+     //   buttonCurrentVolumeText.text = $"{num:F2}";
+        buttonCurrentVolumeText.text = $"{Mathf.RoundToInt(num*100)} %";
     }
 
     public void reduceVolume()
     {
-        if (GameState.Instance.GetVolume() >= 0.2f)
+        if (GameState.Instance.GetVolume() > 0.1f)
         {
             float num = GameState.Instance.GetVolume();
             GameState.Instance.SetVolume(num - .1f);
-            buttonCurrentVolumeText.text = $"{GameState.Instance.GetVolume():F2}";
+          //  buttonCurrentVolumeText.text = $"{GameState.Instance.GetVolume():F2}";
+            buttonCurrentVolumeText.text = $"{Mathf.RoundToInt(GameState.Instance.GetVolume() * 100)} %";  
+        } else
+        {
+            float num = GameState.Instance.GetVolume();
+            GameState.Instance.SetVolume(.1f);
+            //  buttonCurrentVolumeText.text = $"{GameState.Instance.GetVolume():F2}";
+            buttonCurrentVolumeText.text = $"{Mathf.RoundToInt(.1f * 100)} %";
         }
     }
 
@@ -182,7 +190,8 @@ public class OptionsManager : MonoBehaviour
     {
         float num = GameState.Instance.GetVolume();
         GameState.Instance.SetVolume(num + .1f);
-        buttonCurrentVolumeText.text = $"{GameState.Instance.GetVolume():F2}";
+      //  buttonCurrentVolumeText.text = $"{GameState.Instance.GetVolume():F2}";
+        buttonCurrentVolumeText.text = $"{Mathf.RoundToInt(GameState.Instance.GetVolume() * 100)} %";
     }
 
 
