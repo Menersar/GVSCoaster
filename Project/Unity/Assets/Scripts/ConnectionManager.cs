@@ -1,9 +1,5 @@
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
-using UnityEngine.UI;
-
-
 using TMPro;
 
 public class ConnectionManager : MonoBehaviour
@@ -13,18 +9,14 @@ public class ConnectionManager : MonoBehaviour
     // + nach vorne, - nach hinten (R vorne, L hinten)
     // + nach rechts, - nach links (R rechts, L links)
 
-
-
     public GameObject statusIndicator;
     public Transform eingang;
 
     public bool readyToFire = true;
 
-
-
     private bool cartGvs = true;
     public bool playerOnCart = false;
-   // public bool playerLeft = true;
+
     public bool doNotMovePlayer = false;
 
 
@@ -46,7 +38,8 @@ public class ConnectionManager : MonoBehaviour
         if (cartGvs)
         {
             cartGVSToggleText.text = "GVS:\nON";
-        } else
+        }
+        else
         {
             cartGVSToggleText.text = "GVS:\nOFF";
         }
@@ -56,40 +49,31 @@ public class ConnectionManager : MonoBehaviour
     {
         playerOnCart = isOnCart;
         doNotMovePlayer = true;
-       // playerLeft = !isOnCart;
-    }
-    
-    public bool isPlayerOnCart()
-    {
-       return playerOnCart;
     }
 
-    public bool isGvsOnCartEnabled ()
+    public bool isPlayerOnCart()
+    {
+        return playerOnCart;
+    }
+
+    public bool isGvsOnCartEnabled()
     {
         return cartGvs;
     }
 
     public void buttonPressedToEnterCart()
     {
-        // cart.GetComponent<RollerCoaster>()
-       // setPlayerOnCart(true);
-        //Debug.Log("Player on the Cart!");
 
-        //currentPlayer.transform.SetParent(cart.transform);
-        //currentPlayer.transform.position = cart.transform.position;
-        //currentPlayer.transform.rotation = cart.transform.rotation;
-       // cart.GetComponent<spli>
     }
+
     public void onButton3Pressed()
     {
         if (readyToFire)
         {
             readyToFire = false;
 
-
             m2MqttUnityTest.sendString("T2");
 
-            //	$Timer.start()
             StartCoroutine(setTimerTimeout(2));
         }
     }
@@ -102,16 +86,13 @@ public class ConnectionManager : MonoBehaviour
 
             m2MqttUnityTest.sendString("T3");
 
-            //	$Timer.start()
             StartCoroutine(setTimerTimeout(3));
         }
     }
 
     public void onDebugButton2Pressed()
     {
-
         m2MqttUnityTest.sendString("D");
-
     }
 
     IEnumerator setTimerTimeout(int secs)
@@ -125,9 +106,6 @@ public class ConnectionManager : MonoBehaviour
         readyToFire = true;
     }
 
-
-
-
     public void cartRotationChanged(float rot)
     {
         rot *= .1f;
@@ -137,7 +115,8 @@ public class ConnectionManager : MonoBehaviour
             if (rot > 0)
             {
                 rot = 10;
-            } else if (rot < 0)
+            }
+            else if (rot < 0)
             {
                 rot = -10;
             }
@@ -145,45 +124,14 @@ public class ConnectionManager : MonoBehaviour
 
         rotationValue = Mathf.RoundToInt(rot);
         m2MqttUnityTest.analogForceChange(new Vector2(rotationValue, 0), new Vector2(0, 0));
-
-
     }
 
-
-    
- 
     public void leaveCart()
     {
         doNotMovePlayer = true;
-         setPlayerOnCart(false);
-        // playerLeft = true;
+        setPlayerOnCart(false);
+
         currentPlayer.transform.position = eingang.position;
         currentPlayer.transform.rotation = eingang.transform.rotation;
-
-        // StartCoroutine(waitUntilPlayerOnStart());
-        // 
-
-
-
     }
-
-  //  private IEnumerator waitUntilPlayerOnStart()
-   // {
-    //    currentPlayer.transform.position = eingang.position;
-     //   currentPlayer.transform.rotation = eingang.transform.rotation;
-
-       // while (!eingang.) 
-      //      yield return null;
-        //
-    //    if (currentPlayer.transform.position == eingang.position)
-       // {
-     //   doNotMovePlayer = false;
-//Debug.Log("left!");
-
-     //   }
-
-        // playerLeft = true;
-    //}
-
-
 }

@@ -12,7 +12,6 @@ public class SaveManager : MonoBehaviour
         get;
         set;
     }
-
     private void Awake()
     {
         UnityEngine.Object.DontDestroyOnLoad(base.gameObject);

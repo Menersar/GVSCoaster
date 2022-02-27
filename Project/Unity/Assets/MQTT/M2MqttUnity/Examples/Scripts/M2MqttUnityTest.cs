@@ -3,6 +3,8 @@ The MIT License (MIT)
 
 Copyright (c) 2018 Giovanni Paolo Vigano'
 
+Changed by Maite-Aileen Brandt
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -23,13 +25,9 @@ SOFTWARE.
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using uPLibrary.Networking.M2Mqtt;
 using uPLibrary.Networking.M2Mqtt.Messages;
-using M2MqttUnity;
 using TMPro;
 using System.IO;
 
@@ -37,62 +35,41 @@ using System.IO;
 /// <summary>
 /// Examples for the M2MQTT library (https://github.com/eclipse/paho.mqtt.m2mqtt),
 /// </summary>
-//namespace M2MqttUnity.Examples
-//{
+
 /// <summary>
 /// Script for testing M2MQTT with a Unity UI
 /// </summary>
+/// 
 public class M2MqttUnityTest : M2MqttUnityClient
-    {
+{
+    Vector2 lastForce;
+    public int powerLevel = 10;
+    //  public int lastPowerLevel;
+    private bool debugMessagesEnabled = true;
 
-        Vector2 lastForce;
-        public int powerLevel = 10;
-        public int lastPowerLevel;
-        private bool debugMessagesEnabled = true;
-        
-        private int receivedMessagegNumber = 0;
-        private int sentMessagegNumber = 0;
-        public TMP_Text receivedMessage;
-        public TMP_Text sentMessage;
-        public bool connectionEstablished = false;
+    private int receivedMessagegNumber = 0;
+    private int sentMessagegNumber = 0;
+    public TMP_Text receivedMessage;
+    public TMP_Text sentMessage;
+    public bool connectionEstablished = false;
 
-        public ConnectionManager connMan;
+    public ConnectionManager connMan;
 
+    [Tooltip("Set this to true to perform a testing cycle automatically on startup")]
+    public bool autoTest = false;
+    [Header("User Interface")]
 
+    public string topic1 = "M2MQTT_Unity/test/ESPXY";
+    public string topicOut = "M2MQTT_Unity/test/ESPXY/outTopic";
+    public bool setToZero = true;
 
-        [Tooltip("Set this to true to perform a testing cycle automatically on startup")]
-        public bool autoTest = false;
-        [Header("User Interface")]
-       /* public InputField consoleInputField;
-        public Toggle encryptedToggle;
-        public InputField addressInputField;
-        public InputField portInputField;
-        public Button connectButton;
-        public Button disconnectButton;
-        public Button testPublishButton;
-        public Button clearButton;*/
-        public string topic1 = "M2MQTT_Unity/test/ESPXY";
-        public string topicOut = "M2MQTT_Unity/test/ESPXY/outTopic";
-        public bool setToZero = true;
+    public String paceroni;
 
-        private List<string> eventMessages = new List<string>();
-        private bool updateUI = false;
-
-        public String paceroni;
-
- //   public GameObject slider;
- //   public GameObject powerLevelSlider;
-    public GameObject powerLevelText;
-
-    //public GameObject statusIndicator;
     public GameObject statusIndicator2;
 
     public TMP_Text brokerAdressText;
     public TMP_Text brokerPortText;
     public int currentMQTTText = 0;
-
-   // public TMP_InputField brokerAdressInputField;
-  //  public TMP_InputField brokerPortInputField;
 
     public GameObject manualConnect;
     public GameObject manualDisconnect;
@@ -109,20 +86,15 @@ public class M2MqttUnityTest : M2MqttUnityClient
     public GameObject soundSettingsToDisable;
     public OptionsManager optionsManager;
 
-
-
     public void toggleMQTTSettings()
     {
         MQTTSettingsVisible = !MQTTSettingsVisible;
         MQTTSettingsToDisable.SetActive(MQTTSettingsVisible);
-
-
     }
 
     public void toggleSettingsButtons()
     {
-        
-       settingsVisible = !settingsVisible;
+        settingsVisible = !settingsVisible;
         if (settingsVisible == false)
         {
             if (currentMQTTText == 0)
@@ -134,29 +106,27 @@ public class M2MqttUnityTest : M2MqttUnityClient
                 brokerPortText.fontStyle = FontStyles.Normal;
             }
             optionsManager.settingsEnabled = false;
-
-           // optionsManager.enabled = settingsVisible;
         }
         MQTTSettingsToDisable.SetActive(settingsVisible);
         graphicsSettingsToDisable.SetActive(settingsVisible);
         soundSettingsToDisable.SetActive(settingsVisible);
-       // optionsManager.enabled = settingsVisible;
+
         if (settingsVisible == true)
         {
             optionsManager.settingsEnabled = true;
             optionsManager.refreshButtons();
 
-            if (currentMQTTText == 0) {
+            if (currentMQTTText == 0)
+            {
                 brokerAdressText.fontStyle = FontStyles.Underline;
-            } else
+            }
+            else
             {
                 brokerPortText.fontStyle = FontStyles.Underline;
             }
-           // optionsManager.enabled = settingsVisible;
         }
-
-
     }
+
     public void toggleCurrentMQTTText()
     {
         if (currentMQTTText == 0)
@@ -164,7 +134,8 @@ public class M2MqttUnityTest : M2MqttUnityClient
             currentMQTTText = 1;
             brokerAdressText.fontStyle = FontStyles.Normal;
             brokerPortText.fontStyle = FontStyles.Underline;
-        } else
+        }
+        else
         {
             currentMQTTText = 0;
             brokerAdressText.fontStyle = FontStyles.Underline;
@@ -181,11 +152,12 @@ public class M2MqttUnityTest : M2MqttUnityClient
             if (inputText != "")
             {
                 brokerAdressText.text += inputText;
-            } else
+            }
+            else
             {
                 brokerAdressText.text = brokerAdressText.text.Remove(brokerAdressText.text.Length - 1);
             }
-            
+
         }
         else if (currentMQTTText == 1)
         {
@@ -201,24 +173,11 @@ public class M2MqttUnityTest : M2MqttUnityClient
         }
     }
 
-  
     public void TestPublish()
-        {
-            client.Publish(topic1, System.Text.Encoding.UTF8.GetBytes("Test message"), MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, false);
-            Debug.Log("Test message published");
-          //  AddUiMessage("Test message published.");
-        }
-
-        public void SetBrokerAddress(string brokerAddress)
-        {
-        /*
-        
-            if (addressInputField && !updateUI)
-            {
-                this.brokerAddress = brokerAddress;
-            }
-        */
-        }
+    {
+        client.Publish(topic1, System.Text.Encoding.UTF8.GetBytes("Test message"), MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, false);
+        //Debug.Log("Test message published");
+    }
 
     public void startLocalMQTTBroker()
     {
@@ -229,61 +188,25 @@ public class M2MqttUnityTest : M2MqttUnityClient
 
     public void installLocalMosquittoMQTTBroker()
     {
-        
-            string path = Path.Combine(Application.streamingAssetsPath) + "MosquittoInstallationFile/mosquittoInstallWindows.exe";
+        string path = Path.Combine(Application.streamingAssetsPath) + "MosquittoInstallationFile/mosquittoInstallWindows.exe";
 
-            Application.OpenURL(path); //Open the folder in explorer
-        
+        Application.OpenURL(path); //Open the folder in explorer
     }
 
-        public void SetBrokerPort(string brokerPort)
-        {
-        /*
-            if (portInputField && !updateUI)
-            {
-                int.TryParse(brokerPort, out this.brokerPort);
-            }
-        */
-        }
-
-        public void SetEncrypted(bool isEncrypted)
-        {
-            this.isEncrypted = isEncrypted;
-        }
-
-
-        public void SetUiMessage(string msg)
-        {/*
-            if (consoleInputField != null)
-            {
-                consoleInputField.text = msg;
-                updateUI = true;
-            }
-        */
-        }
-
-     //   public void AddUiMessage(string msg)
-      //  {
-        /*
-            if (consoleInputField != null)
-            {
-                consoleInputField.text += msg + "\n";
-                updateUI = true;
-            }
-        */
-     //   }
+    public void SetEncrypted(bool isEncrypted)
+    {
+        this.isEncrypted = isEncrypted;
+    }
 
     public void connectMQT()
     {
-
-
         if (!connectionEstablished)
         {
             // get address and port information from the text fields in the scene
             this.brokerAddress = brokerAdressText.text;
             int.TryParse(brokerPortText.text, out this.brokerPort);
+
             base.Connect();
-          //  sendString("A" + this.brokerAddress + ":" + "P" + this.brokerPort);
         }
     }
 
@@ -291,194 +214,107 @@ public class M2MqttUnityTest : M2MqttUnityClient
     {
         if (connectionEstablished)
         {
-           // Debug.Log("try disconnect");
+            sendZeros();
 
             Disconnect();
-         //   manualConnect.SetActive(true);
-         //   manualDisconnect.SetActive(false);
         }
-
-
-     
     }
 
     protected override void OnConnecting()
-        {
-            base.OnConnecting();
-            SetUiMessage("Connecting to broker on " + brokerAddress + ":" + brokerPort.ToString() + "...\n");
-        }
+    {
+        base.OnConnecting();
+    }
 
-        protected override void OnConnected()
-        {
-            // manualConnect.SetActive(false);
-          //  manualDisconnect.SetActive(true);
+    protected override void OnConnected()
+    {
+        base.OnConnected();
 
-            base.OnConnected();
-            SetUiMessage("Connected to broker on " + brokerAddress + "\n");
-
-
-            connectionEstablished = true;
-          //  statusIndicator.GetComponent<RawImage>().color = Color.green;
+        connectionEstablished = true;
         statusIndicator2.GetComponent<MeshRenderer>().materials[0].SetColor("_BaseColor", Color.green);
         statusIndicator2.GetComponent<MeshRenderer>().materials[0].SetColor("_EmissionColor", Color.green * HDRGlowIntensity);
 
-
-        //  sendString("A" + this.brokerAddress + ":" + "P" + this.brokerPort);
-
         optionsManager.ChangeMQTTSettings();
 
-
-
-
-
-        if (autoTest)
-            {
-                TestPublish();
-            }
-        }
-
-        protected override void SubscribeTopics()
-        {
-            client.Subscribe(new string[] { topic1, topicOut }, new byte[] { MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE });
-        }
-
-        protected override void UnsubscribeTopics()
-        {
-            client.Unsubscribe(new string[] { topic1, topicOut });
-        }
-
-        protected override void OnConnectionFailed(string errorMessage)
-        {
-           // AddUiMessage("CONNECTION FAILED! " + errorMessage);
-        connectionEstablished = false;
-        statusIndicator2.GetComponent<MeshRenderer>().materials[0].SetColor("_BaseColor", Color.red);
-        statusIndicator2.GetComponent<MeshRenderer>().materials[0].SetColor("_EmissionColor", Color.red * HDRGlowIntensity);
-    }
-
-        protected override void OnDisconnected()
-        {
-        connectionEstablished = false;
-        //statusIndicator.GetComponent<RawImage>().color = Color.red;
-        statusIndicator2.GetComponent<MeshRenderer>().materials[0].SetColor("_BaseColor", Color.red);
-        statusIndicator2.GetComponent<MeshRenderer>().materials[0].SetColor("_EmissionColor", Color.red * HDRGlowIntensity);
-
-        //Debug.Log("is Disconnected");
-
-
-       // manualConnect.SetActive(true);
-       // manualDisconnect.SetActive(false);
-        //AddUiMessage("Disconnected.");
-        }
-
-        protected override void OnConnectionLost()
-        {
-            //AddUiMessage("CONNECTION LOST!");
-            connectionEstablished = false;
-            statusIndicator2.GetComponent<MeshRenderer>().materials[0].SetColor("_BaseColor", Color.red);
-            statusIndicator2.GetComponent<MeshRenderer>().materials[0].SetColor("_EmissionColor", Color.red * HDRGlowIntensity);
-    }
-
-        private void UpdateUI()
-        {
-        /*
-            if (client == null)
-            {
-                if (connectButton != null)
-                {
-                    connectButton.interactable = true;
-                    disconnectButton.interactable = false;
-                    testPublishButton.interactable = false;
-                }
-            }
-            else
-            {
-                if (testPublishButton != null)
-                {
-                    testPublishButton.interactable = client.IsConnected;
-                }
-                if (disconnectButton != null)
-                {
-                    disconnectButton.interactable = client.IsConnected;
-                }
-                if (connectButton != null)
-                {
-                    connectButton.interactable = !client.IsConnected;
-                }
-            }
-            if (addressInputField != null && connectButton != null)
-            {
-                addressInputField.interactable = connectButton.interactable;
-                addressInputField.text = brokerAddress;
-            }
-            if (portInputField != null && connectButton != null)
-            {
-                portInputField.interactable = connectButton.interactable;
-                portInputField.text = brokerPort.ToString();
-            }
-            if (encryptedToggle != null && connectButton != null)
-            {
-                encryptedToggle.interactable = connectButton.interactable;
-                encryptedToggle.isOn = isEncrypted;
-            }
-            if (clearButton != null && connectButton != null)
-            {
-                clearButton.interactable = connectButton.interactable;
-            }
-            updateUI = false;
-        */
-        }
-
-        protected override void Start()
-        {
-            this.brokerAddress = brokerAdressText.text;
-           // this.brokerPort = int.Parse(brokerPortInputField.text);
-            int.TryParse(brokerPortText.text, out this.brokerPort);
-
-            SetUiMessage("Ready.");
-            updateUI = true;
-            base.Start();
-        powerLevelText.GetComponent<TMP_Text>().text = "Power Level: " + powerLevel;
         if (connectionEstablished)
         {
             sendZeros();
         }
 
+        if (autoTest)
+        {
+            TestPublish();
+        }
+    }
+
+    protected override void SubscribeTopics()
+    {
+        client.Subscribe(new string[] { topic1, topicOut }, new byte[] { MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE });
+    }
+
+    protected override void UnsubscribeTopics()
+    {
+        client.Unsubscribe(new string[] { topic1, topicOut });
+    }
+
+    protected override void OnConnectionFailed(string errorMessage)
+    {
+        connectionEstablished = false;
+        statusIndicator2.GetComponent<MeshRenderer>().materials[0].SetColor("_BaseColor", Color.red);
+        statusIndicator2.GetComponent<MeshRenderer>().materials[0].SetColor("_EmissionColor", Color.red * HDRGlowIntensity);
+    }
+
+    protected override void OnDisconnected()
+    {
+        connectionEstablished = false;
+        statusIndicator2.GetComponent<MeshRenderer>().materials[0].SetColor("_BaseColor", Color.red);
+        statusIndicator2.GetComponent<MeshRenderer>().materials[0].SetColor("_EmissionColor", Color.red * HDRGlowIntensity);
+    }
+
+    protected override void OnConnectionLost()
+    {
+        connectionEstablished = false;
+        statusIndicator2.GetComponent<MeshRenderer>().materials[0].SetColor("_BaseColor", Color.red);
+        statusIndicator2.GetComponent<MeshRenderer>().materials[0].SetColor("_EmissionColor", Color.red * HDRGlowIntensity);
+    }
+
+    protected override void Start()
+    {
+        // get address and port information from the SaveManager
+        this.brokerAddress = SaveManager.Instance.state.MQTTAdress;
+        int.TryParse(SaveManager.Instance.state.MQTTPort, out this.brokerPort);
+
+        base.Start();
+        powerLevel = SaveManager.Instance.state.powerLevel;
     }
 
     protected override void DecodeMessage(string topic, byte[] message)
+    {
+        if (topic == this.topicOut)
         {
-            
-            if (topic == this.topicOut)
-            {
-                string msg = System.Text.Encoding.UTF8.GetString(message);
-                Debug.Log("Received: " + msg);
-                StoreMessage(msg);
+            string msg = System.Text.Encoding.UTF8.GetString(message);
 
-                clearMessages();
-                receivedMessage.text = receivedMessage.text + msg + "\n";
-                receivedMessagegNumber++;
-            }
-            if (topic == this.topic1)
+            clearMessages();
+            receivedMessage.text = receivedMessage.text + msg + "\n";
+            receivedMessagegNumber++;
+        }
+        if (topic == this.topic1)
+        {
+            if (autoTest)
             {
-                if (autoTest)
-                {
-                    autoTest = false;
-                    connectionEstablished = false;
-                // statusIndicator.GetComponent<RawImage>().color = Color.red;
+                autoTest = false;
+                connectionEstablished = false;
                 statusIndicator2.GetComponent<MeshRenderer>().materials[0].SetColor("_BaseColor", Color.red);
                 statusIndicator2.GetComponent<MeshRenderer>().materials[0].SetColor("_EmissionColor", Color.red * HDRGlowIntensity);
 
                 Disconnect();
-                }
             }
         }
+    }
 
-
-
-
-        public void analogForceChange(Vector2 inForce, Vector2 inAnalog)
+    public void analogForceChange(Vector2 inForce, Vector2 inAnalog)
+    {
+        if (connectionEstablished)
         {
-        if (connectionEstablished) {
             if (Mathf.Abs(inForce.x) == 0 && !setToZero)
             {
                 sendZeros();
@@ -487,16 +323,15 @@ public class M2MqttUnityTest : M2MqttUnityClient
             }
             else
             {
-                if (Mathf.Abs(inForce.y - lastForce.y) > 0.1 || Mathf.Abs(inForce.x - lastForce.x) > 0.1 || lastPowerLevel != powerLevel)
+                if (Mathf.Abs(inForce.y - lastForce.y) > 0.1 || Mathf.Abs(inForce.x - lastForce.x) > 0.1)
                 {
                     setToZero = false;
 
                     var pac = "Y" + Mathf.RoundToInt(inForce.y * powerLevel).ToString() + ":X" + Mathf.RoundToInt(inForce.x * powerLevel).ToString();
-                    // Debug.Log(pac);
                     paceroni = pac;
                     client.Publish(topic1, System.Text.Encoding.UTF8.GetBytes(pac), MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, false);
                     lastForce = inForce;
-                    lastPowerLevel = powerLevel;
+
                     if (debugMessagesEnabled)
                     {
                         clearMessages();
@@ -506,98 +341,58 @@ public class M2MqttUnityTest : M2MqttUnityClient
                 }
             }
         }
+    }
 
-        }
+    public void sendZeros()
+    {
+        string pac = "Y" + 0.ToString() + ":X" + 0.ToString();
+        client.Publish(topic1, System.Text.Encoding.UTF8.GetBytes(pac), MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, false);
 
-        public void sendZeros()
+        if (debugMessagesEnabled)
         {
-            string pac = "Y" + 0.ToString() + ":X" + 0.ToString();
-            client.Publish(topic1, System.Text.Encoding.UTF8.GetBytes(pac), MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, false);
-
-            if (debugMessagesEnabled)
-            {
-                clearMessages();
-                sentMessage.text = sentMessage.text + pac + "\n";
-                sentMessagegNumber++;
-            }
             clearMessages();
-            sentMessage.text = sentMessage.text + "Force x and y to ZERO\n";
+            sentMessage.text = sentMessage.text + pac + "\n";
             sentMessagegNumber++;
-
         }
+        clearMessages();
+        sentMessage.text = sentMessage.text + "Force x and y to ZERO\n";
+        sentMessagegNumber++;
+    }
 
-        public void clearMessages()
+    public void clearMessages()
+    {
+        if (receivedMessagegNumber >= 10)
         {
-            if (receivedMessagegNumber >= 10)
-            {
-                receivedMessage.text = "Received:\n";
-                receivedMessagegNumber = 0;
-            }
-            if (sentMessagegNumber >= 10)
-            {
-                sentMessage.text = "Sent:\n";
-                sentMessagegNumber = 0;
-            }
-
-
-
+            receivedMessage.text = "Received:\n";
+            receivedMessagegNumber = 0;
         }
-
-
+        if (sentMessagegNumber >= 10)
+        {
+            sentMessage.text = "Sent:\n";
+            sentMessagegNumber = 0;
+        }
+    }
 
     public void onClearButtonPressed()
     {
-
         receivedMessage.text = "Received:\n";
         receivedMessagegNumber = 0;
 
 
         sentMessage.text = "Sent:\n";
         sentMessagegNumber = 0;
-
-
-
-
     }
 
-    /*
-    public void setPowerLevel()
-    {
-        // int sliderValue = Mathf.RoundToInt(powerLevelSlider.GetComponent<Slider>().value);
-        powerLevel = Mathf.RoundToInt(powerLevelSlider.GetComponent<Slider>().value);
-        powerLevelText.GetComponent<TMP_Text>().text = "Power Level: " + powerLevel;
-        Debug.Log("Power Level: " + powerLevel);
-
-        // sliderChanged();
-
-    }
-    */
     public void increasePowerLevel()
     {
-        // int sliderValue = Mathf.RoundToInt(powerLevelSlider.GetComponent<Slider>().value);
-        if (powerLevel < 10)
-        {
-            powerLevel = powerLevel + 1;
-            powerLevelText.GetComponent<TMP_Text>().text = "Power Level: " + powerLevel;
-            // Debug.Log("Power Level: " + powerLevel);
-
-            // sliderChanged();
-        }
-
+        optionsManager.increasePowerLevel();
+        powerLevel = GameState.Instance.GetPowerLevel();
     }
 
     public void decreasePowerLevel()
     {
-        if (powerLevel > 0)
-        {
-            // int sliderValue = Mathf.RoundToInt(powerLevelSlider.GetComponent<Slider>().value);
-            powerLevel = powerLevel - 1;
-            powerLevelText.GetComponent<TMP_Text>().text = "Power Level: " + powerLevel;
-            // Debug.Log("Power Level: " + powerLevel);
-
-            // sliderChanged();
-        }
-
+        optionsManager.decreasePowerLevel();
+        powerLevel = GameState.Instance.GetPowerLevel();
     }
 
     public void enableDebugMessages(bool enabledMessages)
@@ -611,11 +406,13 @@ public class M2MqttUnityTest : M2MqttUnityClient
         if (debugMessagesEnabled)
         {
             debugMessagesTextIndicator.text = "ON";
-        } else
+        }
+        else
         {
             debugMessagesTextIndicator.text = "OFF";
         }
     }
+
     public void sendString(string stringToSend)
     {
         if (debugMessagesEnabled)
@@ -626,61 +423,23 @@ public class M2MqttUnityTest : M2MqttUnityClient
             sentMessagegNumber++;
         }
         client.Publish(topic1, System.Text.Encoding.UTF8.GetBytes(stringToSend), MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, false);
-
-        Debug.Log("Sent String: " + stringToSend);
-
     }
 
+    private void OnDestroy()
+    {
+       // if (connectionEstablished)
+       // {
+       //     sendZeros();
+       // }
+        Disconnect();
+        connectionEstablished = false;
+    }
 
-
-    private void StoreMessage(string eventMsg)
+    private void OnValidate()
+    {
+        if (autoTest)
         {
-            eventMessages.Add(eventMsg);
-        }
-
-        private void ProcessMessage(string msg)
-        {
-          //  AddUiMessage("Received--: " + msg);
-        }
-
-        protected override void Update()
-        {
-            
-            base.Update(); // call ProcessMqttEvents()
-
-
-            //  DecodeMessage();
-
-            if (eventMessages.Count > 0)
-            {
-                foreach (string msg in eventMessages)
-                {
-                    ProcessMessage(msg);
-                }
-                eventMessages.Clear();
-            }
-            if (updateUI)
-            {
-                UpdateUI();
-            }
-        }
-
-        private void OnDestroy()
-        {
-        //statusIndicator.GetComponent<RawImage>().color = Color.red;
-        //        statusIndicator2.GetComponent<MeshRenderer>().materials[0].color = Color.red;
-
-        sendZeros();
-            Disconnect();
-            connectionEstablished = false;
-
-        }
-
-        private void OnValidate()
-        {
-            if (autoTest)
-            {
-                autoConnect = true;
-            }
+            autoConnect = true;
         }
     }
+}

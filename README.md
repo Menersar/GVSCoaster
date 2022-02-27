@@ -18,6 +18,10 @@ Unity project files:
 Arduino (ESP) files:
 - Found under \Project\Arduino.
 
+Libraries used in the Arduino (ESP) project:
+- Found under \Project\Arduino\libraries.
+- To use them, copy these into folder C:\Users\USERNAME\Documents\Arduino\libraries
+
 Build (Android APK):
 - Found under \Project\Build.
 

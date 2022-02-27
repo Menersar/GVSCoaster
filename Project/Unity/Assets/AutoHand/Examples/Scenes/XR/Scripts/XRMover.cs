@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using Autohand.Demo;
 
-namespace Autohand{
+namespace Autohand
+{
     //THIS SCRIPT IS A TEMPORARY DEMO SCRIPT
     //BETTER MOVEMENT OPTIONS COMING SOON
-    public class XRMover : MonoBehaviour{
+    public class XRMover : MonoBehaviour
+    {
         [Header("TEMP DEMO SCRIPT - Advanced script coming soon")]
         [Header("Controllers")]
         public XRHandControllerLink moverController;
@@ -24,51 +26,47 @@ namespace Autohand{
         public float speed = 5;
         public float gravity = 1;
 
-        //  public bool onCart = true;
-
         public ConnectionManager cm;
 
         private float currentGravity = 1;
 
         private bool axisReset = true;
-    //    public bool doNotMovePlayer = true;
 
         Vector3 moveAxis;
         Vector2 turningAxis;
 
         public GameObject positionFollow;
 
-       // private void Update()
-       // {
-     //       if(positionFollow)
-       //     this.transform.position = positionFollow.transform.position;
-       // }
         public void setPositionToFollow(GameObject go)
         {
             positionFollow = go;
         }
         //Driver
-        public void LateUpdate(){
+        public void LateUpdate()
+        {
             turningAxis = turningController.GetAxis2D(moverAxis);
             moveAxis = moverController.GetAxis2D(moverAxis);
-            if (!cm.doNotMovePlayer) {
-                if (!cm.playerOnCart) {
+            if (!cm.doNotMovePlayer)
+            {
+                if (!cm.playerOnCart)
+                {
                     Move(moveAxis.x, moveAxis.z, moveAxis.y);
+                    Turning();
                 }
             }
-                Turning();
+
         }
 
 
-        private void Awake(){
+        private void Awake()
+        {
             gameObject.layer = LayerMask.NameToLayer("HandPlayer");
             controller = GetComponent<CharacterController>();
-         //   UnityEngine.XR.InputTracking.disablePositionalTracking = true;
-
         }
 
 
-        public void Move(float x, float y, float z){
+        public void Move(float x, float y, float z)
+        {
 
             Vector3 direction = new Vector3(x, y, z);
             Vector3 headRotation = new Vector3(0, head.transform.eulerAngles.y, 0);
@@ -84,14 +82,18 @@ namespace Autohand{
         }
 
 
-        void Turning(){
+        void Turning()
+        {
             //Snap turning
-            if (snapTurning){
-                if (turningAxis.x > 0.7f && axisReset){
+            if (snapTurning)
+            {
+                if (turningAxis.x > 0.7f && axisReset)
+                {
                     transform.rotation *= Quaternion.Euler(0, turnAngle, 0);
                     axisReset = false;
                 }
-                else if (turningAxis.x < -0.7f && axisReset){
+                else if (turningAxis.x < -0.7f && axisReset)
+                {
                     transform.rotation *= Quaternion.Euler(0, -turnAngle, 0);
                     axisReset = false;
                 }
@@ -101,7 +103,8 @@ namespace Autohand{
             }
 
             //Smooth turning
-            else{
+            else
+            {
                 transform.rotation *= Quaternion.Euler(0, Time.deltaTime * turnAngle * turningAxis.x, 0);
             }
         }

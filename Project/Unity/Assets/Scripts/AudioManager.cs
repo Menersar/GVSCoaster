@@ -6,16 +6,9 @@ public class AudioManager : MonoBehaviour
 {
     public Sound[] sounds;
 
-    public Sound[] footsteps;
-
+    //public Sound[] footsteps;
 
     public AudioLowPassFilter filter;
-
-    private float desiredFreq = 500f;
-
-    private float velFreq;
-
-    private float freqSpeed = 0.2f;
 
     public bool muted;
 
@@ -38,7 +31,7 @@ public class AudioManager : MonoBehaviour
             sound.source.pitch = sound.pitch;
             sound.source.bypassListenerEffects = sound.bypass;
         }
-        array = footsteps;
+        //array = footsteps;
         foreach (Sound sound2 in array)
         {
             sound2.source = base.gameObject.AddComponent<AudioSource>();
@@ -49,10 +42,6 @@ public class AudioManager : MonoBehaviour
             sound2.source.bypassListenerEffects = sound2.bypass;
         }
 
-    }
-
-    private void Update()
-    {
     }
 
     public void MuteSounds(bool b)
@@ -147,7 +136,6 @@ public class AudioManager : MonoBehaviour
         }
         sound.source.volume = v;
     }
-
     public void UnmuteMusic()
     {
         Sound[] array = sounds;
@@ -196,6 +184,7 @@ public class AudioManager : MonoBehaviour
         sound.source.Play();
     }
 
+    /*
     public void PlayFootStep()
     {
         if (!muted)
@@ -204,10 +193,7 @@ public class AudioManager : MonoBehaviour
             footsteps[num].source.Play();
         }
     }
-
-
-
-
+    */
 
     public void Stop(string n)
     {
@@ -230,12 +216,6 @@ public class AudioManager : MonoBehaviour
         }
         sound.source.Stop();
     }
-
-    public void SetFreq(float freq)
-    {
-        desiredFreq = freq;
-    }
-
 
     public bool isPlaying()
     {

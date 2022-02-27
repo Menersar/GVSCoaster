@@ -1,13 +1,6 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
-using uPLibrary.Networking.M2Mqtt;
-using uPLibrary.Networking.M2Mqtt.Messages;
-using M2MqttUnity;
 
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 namespace Dreamteck.Splines.Examples
 {
     public class RollerCoaster : MonoBehaviour
@@ -49,9 +42,7 @@ namespace Dreamteck.Splines.Examples
         public float speedPercent;
 
         public ConnectionManager conMan;
-        //   public M2MqttUnityClient conMan;
-        //  public bool gvsCartOn = true;
-        // public bool playerOnCart = false;
+
         public bool brakeRemoved = false;
         public bool stop = false;
 
@@ -60,15 +51,8 @@ namespace Dreamteck.Splines.Examples
         // Use this for initialization
         void Start()
         {
-        //    AddBrake(40);
-            //        AddBrake(40);
-
             follower = GetComponent<SplineFollower>();
             follower.onEndReached += OnEndReached;
-            //  Cursor.lockState = CursorLockMode.Locked;
-          //  minSpeed = 5;
-          //  RemoveBrake();
-          //  AddForce(5f);
         }
 
         void OnEndReached(double last)
@@ -82,7 +66,7 @@ namespace Dreamteck.Splines.Examples
             //Do not select computers that are not connected at the first point so that we don't reverse direction
             for (int i = 0; i < computers.Count; i++)
             {
-                if(connected[i] != 0)
+                if (connected[i] != 0)
                 {
                     computers.RemoveAt(i);
                     connections.RemoveAt(i);
@@ -99,32 +83,15 @@ namespace Dreamteck.Splines.Examples
         // Update is called once per frame
         void Update()
         {
-            if (conMan.isGvsOnCartEnabled() && conMan.isPlayerOnCart() ) 
+            if (conMan.isGvsOnCartEnabled() && conMan.isPlayerOnCart())
             {
                 zRoatation = transform.localEulerAngles.z;
                 zRoatation = (zRoatation > 180) ? zRoatation - 360 : zRoatation;
 
-                //m2MqttUnityTest.ca
-           //     if (lastZRoatation != zRoatation) {
-                    conMan.cartRotationChanged(-zRoatation * 2);
-             //       lastZRoatation = zRoatation;
-                    // conMan.cartRotationChanged(zRoatation);
-
-                  //  conMan.sendRotByMQTT = true;
-            //    }
-              //  else
-            //    {
-            //        conMan.sendRotByMQTT = false;
-
-            //    }
+                conMan.cartRotationChanged(-zRoatation * 2);
             }
-           // else
-              //      {
-              //          conMan.sendRotByMQTT = false;
-              //
-              //      }
 
-                //  if (Input.GetKeyDown(KeyCode.Escape)) Cursor.lockState = CursorLockMode.None;
+            //  if (Input.GetKeyDown(KeyCode.Escape)) Cursor.lockState = CursorLockMode.None;
             float dot = Vector3.Dot(this.transform.forward, Vector3.down);
             float dotPercent = Mathf.Lerp(-slopeRange / 90f, slopeRange / 90f, (dot + 1f) / 2f);
             speed -= Time.deltaTime * frictionForce * (1f - brakeForce);
@@ -140,15 +107,16 @@ namespace Dreamteck.Splines.Examples
             }
             else
             {
-                speedAdd = gravityForce * dotPercent * speedLoss.Evaluate(1f-speedPercent) * Time.deltaTime;
+                speedAdd = gravityForce * dotPercent * speedLoss.Evaluate(1f - speedPercent) * Time.deltaTime;
             }
-            speed += speedAdd * (1f-brakeForce);
+            speed += speedAdd * (1f - brakeForce);
             speed = Mathf.Clamp(speed, minSpeed, maxSpeed);
             if (stop)
             {
                 speed = 0;
             }
-            if (addForce > 0f) {
+            if (addForce > 0f)
+            {
                 float lastAdd = addForce;
                 addForce = Mathf.MoveTowards(addForce, 0f, Time.deltaTime * 30f);
                 speed += lastAdd - addForce;
@@ -162,8 +130,9 @@ namespace Dreamteck.Splines.Examples
             if (brakeTime > Time.time) brakeForce = Mathf.MoveTowards(brakeForce, 1f, Time.deltaTime * brakeSpeed);
             else brakeForce = Mathf.MoveTowards(brakeForce, 0f, Time.deltaTime * brakeReleaseSpeed);
 
-            speedPercent = Mathf.Clamp01(speed/maxSpeed)*(1f-brakeForce);
-            for (int i = 0; i < sounds.Length; i++) {
+            speedPercent = Mathf.Clamp01(speed / maxSpeed) * (1f - brakeForce);
+            for (int i = 0; i < sounds.Length; i++)
+            {
                 if (speedPercent < sounds[i].startPercent - soundFadeLength || speedPercent > sounds[i].endPercent + soundFadeLength)
                 {
                     if (sounds[i].source.isPlaying) sounds[i].source.Pause();
@@ -171,7 +140,7 @@ namespace Dreamteck.Splines.Examples
                 }
                 else if (!sounds[i].source.isPlaying) sounds[i].source.UnPause();
                 float volume = 1f;
-                if (speedPercent < sounds[i].startPercent+soundFadeLength) volume = Mathf.InverseLerp(sounds[i].startPercent, sounds[i].startPercent+soundFadeLength, speedPercent);
+                if (speedPercent < sounds[i].startPercent + soundFadeLength) volume = Mathf.InverseLerp(sounds[i].startPercent, sounds[i].startPercent + soundFadeLength, speedPercent);
                 else if (speedPercent > sounds[i].endPercent) volume = Mathf.InverseLerp(sounds[i].endPercent + soundFadeLength, sounds[i].endPercent, speedPercent);
                 float pitchPercent = Mathf.InverseLerp(sounds[i].startPercent, sounds[i].endPercent, speedPercent);
                 sounds[i].source.volume = volume;
@@ -180,10 +149,8 @@ namespace Dreamteck.Splines.Examples
 
         }
 
-
         public void AddBrake(float time)
         {
-           // minSpeed = 0;
             brakeTime = Time.time + time;
             brakeSound.Stop();
             brakeSound.Play();
@@ -192,7 +159,6 @@ namespace Dreamteck.Splines.Examples
 
         public void RemoveBrake()
         {
-            //minSpeed = 5;
             stop = false;
 
             brakeTime = 0f;
@@ -206,6 +172,7 @@ namespace Dreamteck.Splines.Examples
             addForce = amount;
             boostSound.Stop();
             boostSound.Play();
+            minSpeed = 5f;
         }
 
         public void stopCart()
@@ -215,7 +182,6 @@ namespace Dreamteck.Splines.Examples
             minSpeed = 0;
             maxSpeed = 40f;
             exitButton.SetActive(true);
-
         }
     }
 }
