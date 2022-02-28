@@ -1,5 +1,4 @@
-# GVSCoaster
-
+<h3 align="center">GVS Coaster</h3>
 
 ## Respository Structure
 
