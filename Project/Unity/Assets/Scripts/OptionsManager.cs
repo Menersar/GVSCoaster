@@ -146,7 +146,6 @@ public class OptionsManager : MonoBehaviour
         }
         GameState.Instance.SetEnvironment(_environment);
         UpdateList3Int(buttonEnvironmentText, _environment, "RELEVANTS ITEMS", "SOME DECORATIVES", "ALL ITEMS");
-
     }
 
     public void ToggleMute()
@@ -165,32 +164,37 @@ public class OptionsManager : MonoBehaviour
     {
         float num = GameState.Instance.GetVolume();
         GameState.Instance.SetVolume(num);
-     //   buttonCurrentVolumeText.text = $"{num:F2}";
-        buttonCurrentVolumeText.text = $"{Mathf.RoundToInt(num*100)} %";
+        //   buttonCurrentVolumeText.text = $"{num:F2}";
+        buttonCurrentVolumeText.text = $"{Mathf.RoundToInt(num * 100)} %";
     }
 
     public void reduceVolume()
     {
-        if (GameState.Instance.GetVolume() > 0.1f)
-        {
-            float num = GameState.Instance.GetVolume();
-            GameState.Instance.SetVolume(num - .1f);
-          //  buttonCurrentVolumeText.text = $"{GameState.Instance.GetVolume():F2}";
-            buttonCurrentVolumeText.text = $"{Mathf.RoundToInt(GameState.Instance.GetVolume() * 100)} %";  
-        } else
-        {
-            float num = GameState.Instance.GetVolume();
-            GameState.Instance.SetVolume(.1f);
-            //  buttonCurrentVolumeText.text = $"{GameState.Instance.GetVolume():F2}";
-            buttonCurrentVolumeText.text = $"{Mathf.RoundToInt(.1f * 100)} %";
-        }
+        //if (GameState.Instance.GetVolume() > 0.1f)
+        //{
+        float num = GameState.Instance.GetVolume();
+        // num = num - .1f;
+        // if (num < .1f)
+        //{
+        //    num = .1f;
+        //}
+        GameState.Instance.SetVolume(num - .1f);
+        //  buttonCurrentVolumeText.text = $"{GameState.Instance.GetVolume():F2}";
+        buttonCurrentVolumeText.text = $"{Mathf.RoundToInt(GameState.Instance.GetVolume() * 100)} %";
+        //} else
+        //{
+        //  float num = GameState.Instance.GetVolume();
+        //  GameState.Instance.SetVolume(.1f);
+        //  buttonCurrentVolumeText.text = $"{GameState.Instance.GetVolume():F2}";
+        //  buttonCurrentVolumeText.text = $"{Mathf.RoundToInt(.1f * 100)} %";
+        //}
     }
 
     public void increaseVolume()
     {
         float num = GameState.Instance.GetVolume();
         GameState.Instance.SetVolume(num + .1f);
-      //  buttonCurrentVolumeText.text = $"{GameState.Instance.GetVolume():F2}";
+        //  buttonCurrentVolumeText.text = $"{GameState.Instance.GetVolume():F2}";
         buttonCurrentVolumeText.text = $"{Mathf.RoundToInt(GameState.Instance.GetVolume() * 100)} %";
     }
 

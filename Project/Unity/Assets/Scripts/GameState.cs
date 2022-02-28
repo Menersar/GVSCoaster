@@ -173,7 +173,7 @@ public class GameState : MonoBehaviour
 
     public void SetVolume(float s)
     {
-        float num2 = AudioListener.volume = (volume = Mathf.Clamp(s, 0f, 1f));
+        float num2 = AudioListener.volume = (volume = Mathf.Clamp(s, 0.1f, 1f));
         SaveManager.Instance.state.volume = num2;
         SaveManager.Instance.Save();
     }

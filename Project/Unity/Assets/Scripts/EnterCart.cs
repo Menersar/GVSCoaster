@@ -23,6 +23,8 @@ public class EnterCart : MonoBehaviour
     {
         if (other.tag == "Player")
         {
+            AudioManager.Instance.Play("enterCart");
+
             conMan.setPlayerOnCart(true);
 
             otheroni.transform.position = cart.transform.position;

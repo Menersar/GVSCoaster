@@ -34,6 +34,7 @@ namespace Dreamteck.Splines.Examples
         public CoasterSound[] sounds;
         public AudioSource brakeSound;
         public AudioSource boostSound;
+        public AudioSource stopSound;
         public float soundFadeLength = 0.15f;
 
         public float zRoatation;
@@ -47,6 +48,8 @@ namespace Dreamteck.Splines.Examples
         public bool stop = false;
 
         public GameObject exitButton;
+
+        public bool canManuallyDrive = true;
 
         // Use this for initialization
         void Start()
@@ -151,37 +154,89 @@ namespace Dreamteck.Splines.Examples
 
         public void AddBrake(float time)
         {
-            brakeTime = Time.time + time;
-            brakeSound.Stop();
-            brakeSound.Play();
-            brakeRemoved = false;
+            if (canManuallyDrive)
+            {
+                brakeTime = Time.time + time;
+                if (!stop)
+                {
+                    brakeSound.Stop();
+                    brakeSound.Play();
+                }
+                else
+                {
+                    stopSound.Stop();
+                    stopSound.Play();
+                }
+                brakeRemoved = false;
+            }
+        }
+
+        public void AddBrakeAutomatic(float time)
+        {
+            //if (canManuallyDrive)
+            //{
+                brakeTime = Time.time + time;
+                if (!stop)
+                {
+                    brakeSound.Stop();
+                    brakeSound.Play();
+                }
+                else
+                {
+                    stopSound.Stop();
+                    stopSound.Play();
+                }
+                brakeRemoved = false;
+            //}
         }
 
         public void RemoveBrake()
         {
-            stop = false;
+            if (canManuallyDrive) {
+                stop = false;
 
-            brakeTime = 0f;
-            brakeRemoved = true;
+                brakeTime = 0f;
+                brakeRemoved = true;
 
-            exitButton.SetActive(false);
+                exitButton.SetActive(false);
+            }
+        }
+
+        public void RemoveBrakeAutomatic()
+        {
+           // if (canManuallyDrive)
+           // {
+                stop = false;
+
+                brakeTime = 0f;
+                brakeRemoved = true;
+
+                exitButton.SetActive(false);
+           // }
         }
 
         public void AddForce(float amount)
         {
-            addForce = amount;
-            boostSound.Stop();
-            boostSound.Play();
-            minSpeed = 5f;
+            if (canManuallyDrive)
+            {
+                addForce = amount;
+                boostSound.Stop();
+                boostSound.Play();
+                minSpeed = 5f;
+            }
         }
 
         public void stopCart()
         {
             stop = true;
+            stopSound.Stop();
+            stopSound.Play();
             speed = 0;
             minSpeed = 0;
             maxSpeed = 40f;
             exitButton.SetActive(true);
+
+            canManuallyDrive = true;
         }
     }
 }

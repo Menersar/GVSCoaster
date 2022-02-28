@@ -63,6 +63,9 @@ public class M2MqttUnityTest : M2MqttUnityClient
     public string topicOut = "M2MQTT_Unity/test/ESPXY/outTopic";
     public bool setToZero = true;
 
+    private List<string> eventMessages = new List<string>();
+    private bool updateUI = false;
+
     public String paceroni;
 
     public GameObject statusIndicator2;
@@ -283,6 +286,7 @@ public class M2MqttUnityTest : M2MqttUnityClient
         this.brokerAddress = SaveManager.Instance.state.MQTTAdress;
         int.TryParse(SaveManager.Instance.state.MQTTPort, out this.brokerPort);
 
+        updateUI = true;
         base.Start();
         powerLevel = SaveManager.Instance.state.powerLevel;
     }
@@ -292,6 +296,8 @@ public class M2MqttUnityTest : M2MqttUnityClient
         if (topic == this.topicOut)
         {
             string msg = System.Text.Encoding.UTF8.GetString(message);
+
+            StoreMessage(msg);
 
             clearMessages();
             receivedMessage.text = receivedMessage.text + msg + "\n";
@@ -425,12 +431,36 @@ public class M2MqttUnityTest : M2MqttUnityClient
         client.Publish(topic1, System.Text.Encoding.UTF8.GetBytes(stringToSend), MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, false);
     }
 
+    private void StoreMessage(string eventMsg)
+    {
+        eventMessages.Add(eventMsg);
+    }
+
+    private void ProcessMessage(string msg)
+    {
+    }
+
+    protected override void Update()
+    {
+
+        base.Update(); // call ProcessMqttEvents()
+
+        if (eventMessages.Count > 0)
+        {
+            foreach (string msg in eventMessages)
+            {
+                ProcessMessage(msg);
+            }
+            eventMessages.Clear();
+        }
+    }
+
     private void OnDestroy()
     {
-       // if (connectionEstablished)
-       // {
-       //     sendZeros();
-       // }
+        // if (connectionEstablished)
+        // {
+        //     sendZeros();
+        // }
         Disconnect();
         connectionEstablished = false;
     }

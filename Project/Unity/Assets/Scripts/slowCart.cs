@@ -10,7 +10,8 @@ namespace Dreamteck.Splines.Examples
         {
             if (other.tag == "Cart")
             {
-                rc.AddBrake(rc.speed);
+                rc.AddBrakeAutomatic(rc.speed);
+                rc.canManuallyDrive = false;
 
                 StartCoroutine(BrakeUntilSlow());
             }
@@ -22,7 +23,7 @@ namespace Dreamteck.Splines.Examples
             {
                 if (rc.speedPercent <= .1 && !rc.brakeRemoved)
                 {
-                    rc.RemoveBrake();
+                    rc.RemoveBrakeAutomatic();
                     rc.minSpeed = 2f;
                     rc.maxSpeed = 2f;
                     rc.speed = 2f;
