@@ -1,5 +1,3 @@
-<h3 align="center">GVS Coaster</h3>
-
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
@@ -7,8 +5,7 @@
     <img src="logo/logo2_1.png" alt="Logo" width="100" height="100">
   </a>
 
-<h3 align="center">project_title</h3>
-
+<h3 align="center">GVS Coaster</h3>
 
 </div>
 
@@ -20,7 +17,7 @@
       <a href="#respository-structure">Respository Structure</a>
     </li>
     <li>
-      <a href="#setup-for-mqtt-connection">Setup for MQTT Connection</a>
+      <a href="#setup-for-mqtt-connection-(for-the-galvanic-vestibular-stimulation-(GVS))">Setup for MQTT Connection</a>
     </li>
   </ol>
 </details>
@@ -47,7 +44,7 @@
 - Found under \Sources\Eagle.
 
 
-## Setup for MQTT Connection (for the Galvanic Vestibular Stimulation(GVS))
+## Setup for MQTT Connection (for the Galvanic Vestibular Stimulation (GVS))
 
 ### Required (for connection with local MQTT-Broker): 
 - Install Mosquitto MQTT broker on a local PC (found under \Project\_Mosquitto MQTT Broker).
