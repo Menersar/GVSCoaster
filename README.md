@@ -17,7 +17,7 @@
       <a href="#respository-structure">Respository Structure</a>
     </li>
     <li>
-      <a href="#setup-for-mqtt-connection">Setup for MQTT Connectiontasd</a>
+      <a href="#Setup for MQTT Connection (for the Galvanic Vestibular Stimulation (GVS))">Setup for MQTT Connectiontasd</a>
     </li>
   </ol>
 </details>
@@ -44,8 +44,7 @@
 - Found under \Sources\Eagle.
 
 
-## Setup for MQTT Connection 
-(for the Galvanic Vestibular Stimulation (GVS))
+## Setup for MQTT Connection (for the Galvanic Vestibular Stimulation (GVS))
 
 ### Required (for connection with local MQTT-Broker): 
 - Install Mosquitto MQTT broker on a local PC (found under \Project\_Mosquitto MQTT Broker).
