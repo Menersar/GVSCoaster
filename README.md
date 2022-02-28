@@ -17,7 +17,7 @@
       <a href="#respository-structure">Respository Structure</a>
     </li>
     <li>
-      <a href="#Setup for MQTT Connection (for the Galvanic Vestibular Stimulation (GVS))">Setup for MQTT Connectiontasd</a>
+      <a href="#Setup-for-MQTT-Connection-(for-the-Galvanic-Vestibular-Stimulation-(GVS))">Setup for MQTT Connectiontasd</a>
     </li>
   </ol>
 </details>
