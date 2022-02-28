@@ -23,7 +23,7 @@ Libraries used in the Arduino (ESP) project:
 - To use them, copy these into folder C:\Users\USERNAME\Documents\Arduino\libraries.
 
 Build (Android APK):
-- Found under \Project\Build.
+- Found under \Build.
 
 Documentation and Video:
 - Found under \Documentation.
