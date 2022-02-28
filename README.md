@@ -17,7 +17,7 @@
       <a href="#respository-structure">Respository Structure</a>
     </li>
     <li>
-      <a href="#Setup-for-MQTT-Connection-for-the-Galvanic-Vestibular-Stimulation-GVS">Setup for MQTT Connectiontasd</a>
+      <a href="#setup-for-mqtt-connection-for-the-galvanic-vestibular-stimulation-gvs">Setup for MQTT Connectiontasd</a>
     </li>
   </ol>
 </details>
@@ -37,7 +37,7 @@
 - Found under \Sources\Arduino.
 
 ### Libraries used for the Arduino (ESP) project:
-- Found under \Project\Arduino\libraries.
+- Found under \Sources\Arduino\libraries.
 - To use them, copy these into folder C:\Users\USERNAME\Documents\Arduino\libraries.
 
 ### Eagle Schematic and Board:
@@ -47,12 +47,12 @@
 ## Setup for MQTT Connection (for the Galvanic Vestibular Stimulation (GVS))
 
 ### Required (for connection with local MQTT-Broker): 
-- Install Mosquitto MQTT broker on a local PC (found under \Project\_Mosquitto MQTT Broker).
-- Replace the "mosquitto.conf" in the mosquitto installation folder with the "mosquitto.conf" file (found under \Project\_Mosquitto MQTT Broker).
+- Install Mosquitto MQTT broker on a local PC (found under \Sources\_Mosquitto MQTT Broker).
+- Replace the "mosquitto.conf" in the mosquitto installation folder with the "mosquitto.conf" file (found under \Sources\_MosquittoMQTTBroker).
 - Run the Command Prompt as administrator and type "net start mosquitto" to start the mosquitto MQTT broker locally ("net stop mosquitto" to stop).
 
 ### Nice to have for monitoring of the MQTT messages:
-- Install MQTT.fx (found under \Project\_MQTT fx).
+- Install MQTT.fx (found under \Sources\_MQTTFx).
 - Click on the options icon, if installed on the same computer as the MQTT broker, set the Broker Adress to "127.0.0.1" and the Port to "1883".
 - Click on Connect.
 - Now you are able to Subscribe and Publish to Topics.
